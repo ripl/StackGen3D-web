@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ripl.github.io/StackGen3D-web/sitemap.xml

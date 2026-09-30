@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes</title>
+  <meta name="description" content="StackGen3D generates 3D block structures from three silhouettes and a block inventory, using conditional flow matching trained on stable stacks curated with a physics-informed GNN.">
+  <meta name="keywords" content="StackGen3D, 3D block stacking, silhouettes, conditional flow matching, graph neural network, physical stability, creative assembly, robotics, IROS 2026">
+  <meta name="author" content="Xiaopeng Zhang, Luzhe Sun, Yiqing Xu, Matthew R. Walter">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://ripl.github.io/StackGen3D-web/">
+  <!-- Google Search Console: paste the HTML-tag verification code here, e.g.
+  <meta name="google-site-verification" content="YOUR_CODE"> -->
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Google Scholar -->
+  <meta name="citation_title" content="StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes">
+  <meta name="citation_author" content="Zhang, Xiaopeng">
+  <meta name="citation_author" content="Sun, Luzhe">
+  <meta name="citation_author" content="Xu, Yiqing">
+  <meta name="citation_author" content="Walter, Matthew R.">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="IROS 2026 Workshop on Creativity in Assembly">
+
+  <!-- Open Graph / social previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="StackGen3D">
+  <meta property="og:title" content="StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes">
+  <meta property="og:description" content="Conditional flow matching turns three silhouettes and a block inventory into a 3D block structure. Creativity in Assembly Workshop @ IROS 2026.">
+  <meta property="og:url" content="https://ripl.github.io/StackGen3D-web/">
+  <meta property="og:image" content="https://ripl.github.io/StackGen3D-web/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="StackGen3D: target silhouettes, a reference structure, and a generated block structure">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes">
+  <meta name="twitter:description" content="Conditional flow matching turns three silhouettes and a block inventory into a 3D block structure.">
+  <meta name="twitter:image" content="https://ripl.github.io/StackGen3D-web/assets/img/og-image.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes",
+    "name": "StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes",
+    "description": "StackGen3D generates 3D block structures from three silhouettes and a block inventory, using conditional flow matching trained on stable stacks curated with a physics-informed GNN.",
+    "url": "https://ripl.github.io/StackGen3D-web/",
+    "image": "https://ripl.github.io/StackGen3D-web/assets/img/og-image.png",
+    "datePublished": "2026",
+    "keywords": ["3D block stacking", "silhouettes", "conditional flow matching", "graph neural network", "physical stability", "creative assembly"],
+    "author": [
+      {"@type": "Person", "name": "Xiaopeng Zhang", "url": "https://xpengzxp.github.io/", "affiliation": {"@type": "Organization", "name": "Toyota Technological Institute at Chicago"}},
+      {"@type": "Person", "name": "Luzhe Sun", "url": "https://tllokn.github.io/", "affiliation": {"@type": "Organization", "name": "Toyota Technological Institute at Chicago"}},
+      {"@type": "Person", "name": "Yiqing Xu", "url": "https://eeching.github.io/", "affiliation": {"@type": "Organization", "name": "Stanford University"}},
+      {"@type": "Person", "name": "Matthew R. Walter", "url": "https://home.ttic.edu/~mwalter/", "affiliation": {"@type": "Organization", "name": "Toyota Technological Institute at Chicago"}}
+    ]
+  }
+  </script>
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="assets/js/main.js"></script>
+</head>
+<body id="top">
+
+<header class="topnav" aria-label="Section navigation">
+  <div class="wrap topnav-inner">
+    <a class="topnav-brand" href="#top">StackGen3D</a>
+    <nav>
+      <a href="#motivation">Motivation</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#limitations">Limitations</a>
+      <a href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero wrap">
+    <a class="venue" href="https://sites.google.com/view/creative-assembly-workshop/home">Creativity in Assembly Workshop @ IROS 2026</a>
+    <h1><span class="h1-name">StackGen3D:</span> Stable 3D Block Stack Generation from Multiview Silhouettes</h1>
+
+    <p class="authors">
+      <span class="author"><a href="https://xpengzxp.github.io/">Xiaopeng Zhang</a><sup>1*</sup></span>
+      <span class="author"><a href="https://tllokn.github.io/">Luzhe Sun</a><sup>1*</sup></span>
+      <span class="author"><a href="https://eeching.github.io/">Yiqing Xu</a><sup>2</sup></span>
+      <span class="author"><a href="https://home.ttic.edu/~mwalter/">Matthew R. Walter</a><sup>1</sup></span>
+    </p>
+    <p class="affils">
+      <span><sup>1</sup>Toyota Technological Institute at Chicago</span>
+      <span><sup>2</sup>Stanford University</span>
+    </p>
+    <p class="footnote"><sup>*</sup>Equal contribution. This work was done while Xiaopeng Zhang was an intern at TTIC.</p>
+
+    <div class="buttons">
+      <span class="btn is-disabled" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+        Paper (arXiv)<em>Coming soon</em>
+      </span>
+      <span class="btn is-disabled" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg>
+        Code<em>Coming soon</em>
+      </span>
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h4v4H8.5A1.5 1.5 0 0 0 7 12.5V17M14 7h4v4h-2.5a1.5 1.5 0 0 0-1.5 1.5V17"/></svg>
+        BibTeX
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ Teaser ============ -->
+  <section class="teaser wrap" aria-label="Overview">
+    <figure class="media">
+      <div class="labeled" style="--rows:3">
+        <div class="lab-cols" aria-hidden="true"><span>Front</span><span>Left</span><span>Top</span></div>
+        <div class="lab-rows" aria-hidden="true"><span>Target<span class="lg"> silhouettes</span></span><span>Reference</span><span class="is-gen">Generated</span></div>
+        <div class="lab-media video-box">
+          <video src="assets/video/generation1.mp4" poster="assets/video/generation1_poster.jpg" width="1536" height="1428" autoplay muted loop playsinline aria-label="Generation from noise to a block structure, shown in front, left, and top views"></video>
+        </div>
+      </div>
+      <figcaption>From noise (<i>t</i>&nbsp;=&nbsp;0) to structure (<i>t</i>&nbsp;=&nbsp;1). Rows: target silhouettes, a reference structure, and our generated sample; columns: front, left, and top views.</figcaption>
+    </figure>
+
+    <div class="tldr">
+      <p class="eyebrow">TL;DR</p>
+      <p class="tldr-text">Given a block inventory and three silhouettes, StackGen3D generates a pose for every block with conditional flow matching trained on stable stacks curated by a physics-informed GNN, then picks or refines samples with a simulator-free AABB check.</p>
+      <ul class="glance">
+        <li><span class="glance-k">Stage 1</span>PI-GNN screening and MuJoCo verification build a dataset of about 50k stable structures.</li>
+        <li><span class="glance-k">Stage 2</span>Conditional flow matching generates block poses; AABB overlap selects or refines samples.</li>
+        <li><span class="glance-k">Result</span>Best-of-10 raises post-hoc stability from 45.30% to 72.40% (+27.1 percentage points).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Motivation ============ -->
+  <section class="section" id="motivation">
+    <div class="wrap">
+      <h2>Motivation</h2>
+      <p class="lead">Creative assembly often starts from an incomplete specification, such as a sketch or a silhouette, rather than a full 3D model <a class="cite" href="#ref-1">[1</a>, <a class="cite" href="#ref-2">2]</a>. We study a concrete case: a fixed block inventory and three orthographic silhouettes.</p>
+
+      <figure class="figure fig-narrow">
+        <a class="zoom" href="assets/img/motivation.svg" target="_blank" rel="noopener" title="Open full-size figure"><img src="assets/img/motivation.svg" width="738" height="226" alt="Target front, left, and top silhouettes, and two block layouts that match all three views: layout A is stable, layout B tips over."></a>
+        <figcaption>Schematic: with the same inventory and identical views, layout A is stable, while layout B tips over.</figcaption>
+      </figure>
+
+      <div class="cards three">
+        <div class="card">
+          <h3>Silhouettes do not pin down a layout</h3>
+          <p>Many block arrangements give nearly identical projections, so we model a distribution over layouts, not a single answer.</p>
+        </div>
+        <div class="card">
+          <h3>A matching layout can still fall</h3>
+          <p>Only some arrangements avoid interpenetration and stay stable under gravity.</p>
+        </div>
+        <div class="card">
+          <h3>Stable training data is costly</h3>
+          <p>Checking every candidate in a physics simulator is slow and hard to scale.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Method ============ -->
+  <section class="section" id="method">
+    <div class="wrap">
+      <h2>Method</h2>
+      <p class="lead">StackGen3D has two stages: it first builds a large dataset of stable structures, then learns to generate from it.</p>
+
+      <!-- Stage 1 -->
+      <div class="stage" id="stage1">
+        <p class="stage-tag">Stage 1</p>
+        <h3 class="stage-title">Stable data construction</h3>
+        <p class="prose">Whether a block stays in place depends on how its neighbors support it and on the load passed through those supports. We represent each structure as a directed support graph and train a physics-informed graph neural network (PI-GNN) <a class="cite" href="#ref-3">[3</a>, <a class="cite" href="#ref-4">4]</a> to predict each block's stability and displacement. Nodes encode block geometry, pose, mass, and accumulated supported mass; edges encode support relations such as contact area and relative displacement.</p>
+
+        <figure class="figure fig-md">
+          <a class="zoom" href="assets/img/fig1_pignn_training.svg" target="_blank" rel="noopener" title="Open full-size figure"><img src="assets/img/fig1_pignn_training.svg" width="1080" height="686" loading="lazy" alt="PI-GNN training pipeline in three panels: initial training on simple stacks, removal data construction with MuJoCo labels, and retraining on the combined data."></a>
+          <figcaption>PI-GNN training: an initial model on simple stacks, MuJoCo-labeled removal candidates, and a freshly trained <span class="m">G</span><sub>curated</sub>.</figcaption>
+        </figure>
+
+        <ol class="steps">
+          <li class="step s1">
+            <h4>Initial training</h4>
+            <p>Train <span class="m">G</span><sub>simple</sub> on balanced simple stacks <span class="m">D</span><sub>simple</sub>, built by a COM-based heuristic and labeled in MuJoCo <a class="cite" href="#ref-5">[5]</a>.</p>
+          </li>
+          <li class="step s2">
+            <h4>Removal data</h4>
+            <p>Remove blocks at random from dense Filler3D structures and label every candidate in MuJoCo. Comparing the <span class="m">G</span><sub>simple</sub> prediction <span class="m">ŷ</span> with the label <span class="m">y</span> only identifies errors; every successfully simulated candidate enters <span class="m">D</span><sub>remove</sub>.</p>
+          </li>
+          <li class="step s3">
+            <h4>Retraining</h4>
+            <p>Train <span class="m">G</span><sub>curated</sub>, the same architecture with fresh weights, on <span class="m">D</span><sub>simple</sub>&nbsp;∪&nbsp;<span class="m">D</span><sub>remove</sub>.</p>
+          </li>
+        </ol>
+
+        <div class="split dataset">
+          <div>
+            <h4 class="sub">Screen, then verify</h4>
+            <p><span class="m">G</span><sub>curated</sub> screens new removal candidates, and MuJoCo verifies the ones it keeps. Each stable structure is paired with its three silhouettes to form the training set for generation.</p>
+            <dl class="stats">
+              <div><dt>≈50k</dt><dd>structures</dd></div>
+              <div><dt>40&nbsp;h</dt><dd>on a single A4000 GPU</dd></div>
+              <div><dt>3–5</dt><dd>initial Filler3D size</dd></div>
+            </dl>
+          </div>
+          <figure class="media">
+            <div class="orbit-row">
+              <div class="video-box dark"><video src="assets/video/dataset_orbit1.mp4" poster="assets/video/dataset_orbit1_poster.jpg" width="640" height="436" autoplay muted loop playsinline aria-label="Curated dataset structure 1, rotating view"></video></div>
+              <div class="video-box dark"><video src="assets/video/dataset_orbit2.mp4" poster="assets/video/dataset_orbit2_poster.jpg" width="640" height="436" autoplay muted loop playsinline aria-label="Curated dataset structure 2, rotating view"></video></div>
+              <div class="video-box dark"><video src="assets/video/dataset_orbit3.mp4" poster="assets/video/dataset_orbit3_poster.jpg" width="640" height="436" autoplay muted loop playsinline aria-label="Curated dataset structure 3, rotating view"></video></div>
+            </div>
+            <figcaption>Structures from the curated dataset, shown from a rotating camera.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="stage" id="stage2">
+        <p class="stage-tag">Stage 2</p>
+        <h3 class="stage-title">Conditional generation</h3>
+
+        <figure class="figure">
+          <a class="zoom" href="assets/img/overview.svg" target="_blank" rel="noopener" title="Open full-size figure"><img src="assets/img/overview.svg" width="1324" height="328" loading="lazy" alt="Inference pipeline: front, left, and top silhouettes plus a block inventory of three shape types go into conditional flow matching, then AABB selection, producing a generated structure."></a>
+          <figcaption>At inference, three silhouettes and a block inventory condition the flow-matching model; AABB selection then picks or refines samples, with no simulator in the loop.</figcaption>
+        </figure>
+
+        <div class="split">
+          <div>
+            <h4 class="sub">Conditional flow matching</h4>
+            <p>The mapping from silhouettes to structures is one-to-many, so we learn a distribution over block poses. Let <span class="m">x</span><sub>1</sub> be the poses of a simulator-verified stable structure, a position and a quaternion per block, and let <span class="m">x</span><sub>0</sub>&nbsp;∼&nbsp;<span class="m cal">N</span>(<b class="mb">0</b>,&nbsp;<b class="mb">I</b>) be Gaussian noise. The model learns a velocity field <span class="m">v</span><sub><span class="m">θ</span></sub>:</p>
+            <div class="eq" data-tex="\mathbf{x}_t=(1-t)\,\mathbf{x}_0+t\,\mathbf{x}_1,\qquad t\sim\mathcal{U}[0,1]">x<sub>t</sub> = (1 − t) x<sub>0</sub> + t x<sub>1</sub>,&nbsp;&nbsp; t ∼ U[0, 1]</div>
+            <div class="eq" data-tex="\mathcal{L}_{\mathrm{FM}}=\mathbb{E}\big[\,\|v_\theta(\mathbf{x}_t,t;\mathcal{S},\mathcal{I})-(\mathbf{x}_1-\mathbf{x}_0)\|_2^2\,\big]">L<sub>FM</sub> = E ‖ v<sub>θ</sub>(x<sub>t</sub>, t; S, I) − (x<sub>1</sub> − x<sub>0</sub>) ‖²</div>
+            <p>At inference, an ODE solver <a class="cite" href="#ref-7">[7]</a> integrates <span class="m">v</span><sub><span class="m">θ</span></sub> from <span class="m">t</span>&nbsp;=&nbsp;0 to 1, conditioned on the block inventory <span class="m cal">S</span> and silhouettes <span class="m cal">I</span>. New noise gives a different structure.</p>
+          </div>
+          <div>
+            <h4 class="sub">Joint self-attention over silhouettes and blocks</h4>
+            <p>The velocity field is a Transformer <a class="cite" href="#ref-6">[6]</a>. Each silhouette view is split into patch tokens, and each block gets one token with its shape, current pose <span class="m">x</span><sub><span class="m">t</span></sub>, and time <span class="m">t</span>. The two token sets are concatenated and processed with joint self-attention; each block's output token gives its velocity.</p>
+            <div class="tokens" role="img" aria-label="Schematic: silhouette patch tokens and block tokens are concatenated, processed by a Transformer with joint self-attention, and each block token outputs a velocity over position and quaternion.">
+              <div class="tok-seq">
+                <div class="tok-group">
+                  <div class="tok-row"><i class="t sil"></i><i class="t sil"></i><i class="t sil"></i><i class="t sil"></i><i class="t sil"></i><i class="t sil"></i></div>
+                  <span>silhouette patches<br>front · left · top</span>
+                </div>
+                <div class="tok-group">
+                  <div class="tok-row"><i class="t b1"></i><i class="t b2"></i><i class="t b3"></i><i class="t b1"></i><i class="t b3"></i></div>
+                  <span>one token per block<br>shape, <span class="m">x</span><sub><span class="m">t</span></sub>, <span class="m">t</span></span>
+                </div>
+              </div>
+              <div class="tok-arrow" aria-hidden="true"></div>
+              <div class="tok-box">Transformer · joint self-attention</div>
+              <div class="tok-arrow" aria-hidden="true"></div>
+              <div class="tok-out">velocity per block: position + quaternion</div>
+            </div>
+          </div>
+        </div>
+
+        <h4 class="sub sub-gap">AABB-based inference</h4>
+        <div class="split aabb">
+          <figure class="figure">
+            <img src="assets/img/aabb_overlap.svg" width="416" height="270" loading="lazy" alt="Two posed blocks with dashed axis-aligned bounding boxes AABB i and AABB j overlapping by delta x along x and delta z along z.">
+            <figcaption>Each posed block gets a world axis-aligned bounding box; a pair's depth is its smallest per-axis overlap.</figcaption>
+          </figure>
+          <div>
+            <p>Generated structures can still contain inter-block penetration. We score each sample by geometry alone: for blocks <span class="m">i</span> and <span class="m">j</span>, the pair depth is the smallest per-axis overlap of their AABBs (0 if they do not intersect), and the structure score is the worst pair.</p>
+            <div class="eq" data-tex="d_{ij}=\min(\delta_x,\delta_y,\delta_z),\qquad S=\max_{i&lt;j} d_{ij}">d<sub>ij</sub> = min(δ<sub>x</sub>, δ<sub>y</sub>, δ<sub>z</sub>),&nbsp;&nbsp; S = max<sub>i&lt;j</sub> d<sub>ij</sub></div>
+          </div>
+        </div>
+
+        <div class="cards two">
+          <div class="card outline">
+            <h3>Best-of-N</h3>
+            <p>Draw <span class="m">N</span> samples with different noise for the same silhouettes and inventory, and keep the one with the smallest <span class="m">S</span>.</p>
+            <div class="bon" aria-hidden="true">
+              <span>sample 1<b><span class="m">S</span><sub>1</sub></b></span>
+              <span class="keep">sample 2<b><span class="m">S</span><sub>2</sub> = min</b></span>
+              <span>sample 3<b><span class="m">S</span><sub>3</sub></b></span>
+              <span class="dots">…</span>
+              <span><span>sample <span class="m">N</span></span><b><span class="m">S</span><sub><span class="m">N</span></sub></b></span>
+            </div>
+          </div>
+          <div class="card outline">
+            <h3>Remove-then-Rerun</h3>
+            <p>If <span class="m">S</span>&nbsp;&gt;&nbsp;<span class="m">τ</span>, use the largest AABB overlap to pick one block to remove, update the inventory, and resample the reduced set until <span class="m">S</span>&nbsp;≤&nbsp;<span class="m">τ</span> or no blocks remain.</p>
+            <img src="assets/img/remove_then_rerun.svg" width="580" height="198" loading="lazy" alt="Loop: generate, score S; if S is at most tau, output; otherwise remove one block, update the inventory, and generate again.">
+          </div>
+        </div>
+        <p class="note">Neither procedure calls a physics simulator or the PI-GNN, and neither guarantees physical stability. PyBullet <a class="cite" href="#ref-8">[8]</a> is used only afterward, for evaluation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Results ============ -->
+  <section class="section" id="results">
+    <div class="wrap">
+      <h2>Results</h2>
+
+      <!-- PI-GNN transfer -->
+      <h3 class="res-title">PI-GNN transfers from simple to complex structures</h3>
+      <div class="split res-intro">
+        <p>We compare <span class="m">G</span><sub>simple</sub> with a parameter-matched MLP trained on the same simple stacks (261,576 vs. 261,383 parameters), and with <span class="m">G</span><sub>complex</sub>, the same PI-GNN architecture trained directly on complex structures. Since 85.1% of blocks in the complex data are stable, we also report balanced accuracy. The two models perform similarly on simple stacks, but <span class="m">G</span><sub>simple</sub> transfers far better and approaches <span class="m">G</span><sub>complex</sub>; the BAcc gap shows that complex-domain training still helps identify unstable blocks.</p>
+        <div class="compare" aria-label="Accuracy on complex structures after training on simple stacks">
+          <p class="compare-head">Trained on simple stacks, tested on complex structures</p>
+          <div class="compare-row win"><span class="num">92.66%</span><span class="lbl">PI-GNN <span class="m">G</span><sub>simple</sub></span></div>
+          <div class="compare-row"><span class="num">46.86%</span><span class="lbl">Parameter-matched MLP</span></div>
+          <p class="compare-foot">Accuracy (Table II, Exp. A)</p>
+        </div>
+      </div>
+
+      <figure class="figure">
+        <a class="zoom" href="assets/img/fig2_pignn_predictions.svg" target="_blank" rel="noopener" title="Open full-size figure"><img src="assets/img/fig2_pignn_predictions.svg" width="1600" height="850" loading="lazy" alt="Two complex structures, rows a and b, with columns: input structure, MuJoCo block labels, PI-GNN block labels, and predicted displacement. Stable blocks are green and unstable blocks red."></a>
+        <figcaption>Block-level PI-GNN predictions on complex structures compared with MuJoCo labels; the last column shows predicted displacement magnitude, not stability class.</figcaption>
+      </figure>
+
+      <div class="table-block">
+        <p class="table-cap"><b>Table II.</b> Block-level stability-prediction baselines.</p>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr><th>Exp.</th><th class="l">Training domain / model</th><th class="l">Test domain</th><th>Acc. (%)</th><th>BAcc. (%)</th><th>F1 (%)</th></tr>
+            </thead>
+            <tbody>
+              <tr class="grp-start"><td rowspan="4" class="exp">A</td><td class="l">Simple / MLP</td><td class="l">Simple</td><td>89.81</td><td>89.60</td><td>89.16</td></tr>
+              <tr><td class="l">Simple / <span class="m">G</span><sub>simple</sub></td><td class="l">Simple</td><td>90.01</td><td>87.81</td><td>88.90</td></tr>
+              <tr><td class="l">Simple / MLP</td><td class="l">Complex</td><td>46.86</td><td>67.22</td><td>45.05</td></tr>
+              <tr class="hl"><td class="l">Simple / <span class="m">G</span><sub>simple</sub></td><td class="l">Complex</td><td><b>92.66</b></td><td><b>86.12</b></td><td><b>85.65</b></td></tr>
+              <tr class="grp-start"><td rowspan="2" class="exp">B</td><td class="l">Simple / <span class="m">G</span><sub>simple</sub></td><td class="l">Complex</td><td>92.66</td><td>86.12</td><td>85.65</td></tr>
+              <tr class="hl"><td class="l">Complex / <span class="m">G</span><sub>complex</sub></td><td class="l">Complex</td><td><b>97.58</b></td><td><b>93.76</b></td><td><b>95.07</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">BAcc = ½(TPR + TNR). Bold marks the best result within each experiment on complex test data.</p>
+      </div>
+
+      <!-- Generation -->
+      <h3 class="res-title">Generation without online simulation</h3>
+      <div class="kpis">
+        <div class="kpi">
+          <p class="kpi-num">45.30% <span class="arrow">→</span> 72.40%</p>
+          <p class="kpi-lbl">Post-hoc stability, single sample → <span class="nw">Best-of-10</span></p>
+          <p class="kpi-sub">+27.1 percentage points</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi-num">0.967</p>
+          <p class="kpi-lbl">Silhouette IoU from a single sample</p>
+          <p class="kpi-sub">0.970 with Best-of-10</p>
+        </div>
+      </div>
+      <p class="prose">We evaluate 10 folds × 100 samples. Inference uses only AABB overlap; PyBullet <a class="cite" href="#ref-8">[8]</a> simulates each output afterward to measure stability. A single sample already follows the silhouettes closely, and Best-of-10 raises stability with essentially unchanged IoU, so the learned distribution contains more physically viable modes than one sample shows. Remove-then-Rerun also improves stability, at a modest cost in IoU. Beyond <span class="m">N</span>&nbsp;=&nbsp;10, penetration keeps falling while stability does not rise monotonically: AABB overlap is a useful but incomplete proxy for stability.</p>
+
+      <div class="table-block">
+        <p class="table-cap"><b>Table I.</b> Best-of-N generation (mean ± std over 10 folds, 100 samples per fold).</p>
+        <div class="table-wrap">
+          <table class="tbl tbl-gen">
+            <thead>
+              <tr><th class="l">Inference method</th><th>Stability (%)</th><th>IoU</th><th>Penetration</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="l">Single sample (<span class="m">N</span>&nbsp;=&nbsp;1)</td><td>45.30 ± 4.10</td><td>.967 ± .002</td><td>.711 ± .066</td></tr>
+              <tr><td class="l">Best-of-5</td><td>66.70 ± 4.61</td><td><b>.970</b> ± .002</td><td>.134 ± .026</td></tr>
+              <tr class="hl"><td class="l">Best-of-10</td><td><b>72.40</b> ± 4.63</td><td><b>.970</b> ± .002</td><td>.064 ± .016</td></tr>
+              <tr><td class="l">Best-of-25</td><td>67.80 ± 5.15</td><td><b>.970</b> ± .002</td><td>.034 ± .005</td></tr>
+              <tr><td class="l">Best-of-50</td><td>69.30 ± 4.94</td><td>.969 ± .002</td><td>.028 ± .003</td></tr>
+              <tr><td class="l">Best-of-100</td><td>66.00 ± 4.05</td><td>.969 ± .003</td><td><b>.025</b> ± .002</td></tr>
+              <tr class="grp-start"><td class="l">Remove-then-Rerun</td><td>64.60 ± 4.13</td><td>.953 ± .004</td><td>.099 ± .009</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Stability is evaluated post hoc in PyBullet; IoU is silhouette IoU. Remove-then-Rerun removes blocks, so its outputs use a reduced inventory. Best values in bold.</p>
+      </div>
+
+      <figure class="figure">
+        <a class="zoom" href="assets/img/fig3_generation.svg" target="_blank" rel="noopener" title="Open full-size figure"><img src="assets/img/fig3_generation.svg" width="1660" height="1040" loading="lazy" alt="Two generated examples with 17 and 24 blocks. Rows: target silhouettes, reference, generated with per-view IoU, and after simulation; columns: front, left, and top views."></a>
+        <figcaption>Two generated examples (17 and 24 blocks): target silhouettes, reference structure, generated structure before simulation, and its configuration after post-hoc physics simulation.</figcaption>
+      </figure>
+
+      <div class="split pair">
+        <figure class="media">
+          <div class="labeled" style="--rows:3">
+            <div class="lab-cols" aria-hidden="true"><span>Front</span><span>Left</span><span>Top</span></div>
+            <div class="lab-rows" aria-hidden="true"><span>Target<span class="lg"> silhouettes</span></span><span>Reference</span><span class="is-gen">Generated</span></div>
+            <div class="lab-media video-box">
+              <video src="assets/video/generation2.mp4" poster="assets/video/generation2_poster.jpg" width="1536" height="1428" autoplay muted loop playsinline aria-label="A second generation example, from noise to structure, in front, left, and top views"></video>
+            </div>
+          </div>
+          <figcaption>Generation in action for another target, from noise (<i>t</i>&nbsp;=&nbsp;0) to structure (<i>t</i>&nbsp;=&nbsp;1).</figcaption>
+        </figure>
+        <figure class="media">
+          <div class="labeled" style="--rows:4">
+            <div class="lab-cols" aria-hidden="true"><span>Front</span><span>Left</span><span>Top</span></div>
+            <div class="lab-rows" aria-hidden="true"><span>Target<span class="lg"> silhouettes</span></span><span>Reference</span><span class="is-gen">Generated</span><span><span class="lg">After simulation</span><span class="sm">After sim.</span></span></div>
+            <div class="lab-media">
+              <img src="assets/img/generation_example3.webp" width="1604" height="2140" loading="lazy" alt="A third generated example. Rows: target silhouettes, reference, generated, and after simulation; columns: front, left, and top views.">
+            </div>
+          </div>
+          <figcaption>One more generated example, in the same row layout as the figure above.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Limitations ============ -->
+  <section class="section" id="limitations">
+    <div class="wrap">
+      <h2>Limitations</h2>
+      <div class="cards two">
+        <div class="card">
+          <h3>AABB overlap is a geometric proxy</h3>
+          <p>Selecting or refining samples by AABB overlap reduces interpenetration but does not guarantee physical stability, and beyond <span class="m">N</span>&nbsp;=&nbsp;10 stability no longer rises monotonically.</p>
+        </div>
+        <div class="card">
+          <h3>Evaluated in simulation only</h3>
+          <p>All results come from simulation: MuJoCo for data labels, PyBullet for evaluation. StackGen3D has not been validated on a real robot.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BibTeX ============ -->
+  <section class="section" id="bibtex">
+    <div class="wrap">
+      <h2>BibTeX</h2>
+      <div class="bibtex">
+        <button class="copy-btn" type="button" data-copy="#bibtex-code">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+          <span>Copy</span>
+        </button>
+<pre><code id="bibtex-code">@inproceedings{zhang2026stackgen3d,
+  title     = {StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes},
+  author    = {Zhang, Xiaopeng and Sun, Luzhe and Xu, Yiqing and Walter, Matthew R.},
+  booktitle = {IROS 2026 Workshop on Creativity in Assembly},
+  year      = {2026}
+}</code></pre>
+      </div>
+
+      <div class="refs">
+        <h3>References</h3>
+        <ol>
+          <li id="ref-1">L. Sun, T. Yoneda, S. W. Wheeler, T. Jiang, and M. R. Walter. StackGen: Generating stable structures from silhouettes via diffusion. <a href="https://arxiv.org/abs/2409.18098">arXiv:2409.18098</a>, 2025.</li>
+          <li id="ref-2">Y. Xu, J. Mao, L. Li, Y. Du, T. Lozano-Pérez, L. P. Kaelbling, and D. Hsu. “Set It Up”: Functional object arrangement with compositional generative models (journal version). <a href="https://arxiv.org/abs/2508.02068">arXiv:2508.02068</a>, 2025.</li>
+          <li id="ref-3">J. Gilmer, S. S. Schoenholz, P. F. Riley, O. Vinyals, and G. E. Dahl. <a href="https://arxiv.org/abs/1704.01212">Neural message passing for quantum chemistry</a>. ICML, 2017.</li>
+          <li id="ref-4">M. Fey and J. E. Lenssen. <a href="https://arxiv.org/abs/1903.02428">Fast graph representation learning with PyTorch Geometric</a>. ICLR Workshop on Representation Learning on Graphs and Manifolds, 2019.</li>
+          <li id="ref-5">E. Todorov, T. Erez, and Y. Tassa. <a href="https://mujoco.org/">MuJoCo</a>: A physics engine for model-based control. IROS, 2012.</li>
+          <li id="ref-6">A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, Ł. Kaiser, and I. Polosukhin. <a href="https://arxiv.org/abs/1706.03762">Attention is all you need</a>. NeurIPS, 2017.</li>
+          <li id="ref-7">R. T. Q. Chen, Y. Rubanova, J. Bettencourt, and D. Duvenaud. <a href="https://arxiv.org/abs/1806.07366">Neural ordinary differential equations</a>. NeurIPS, 2018.</li>
+          <li id="ref-8">E. Coumans and Y. Bai. <a href="https://pybullet.org/">PyBullet</a>, a Python module for physics simulation for games, robotics and machine learning. 2016–2021.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>StackGen3D · <a href="https://sites.google.com/view/creative-assembly-workshop/home">Creativity in Assembly Workshop @ IROS 2026</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
