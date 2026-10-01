@@ -412,3 +412,66 @@ figcaption {
   .tbl-gen td.l { min-width: 78px; }
   .bon > span { padding: 6px 8px; }
 }
+
+/* ---------- Best-of-N trade-off (chart + schematic) ---------- */
+.tradeoff { margin-top: 40px; }
+.tradeoff .prose { margin-bottom: 0; }
+.tradeoff-row { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 36px; align-items: start; margin-top: 24px; }
+.tradeoff-row .figure { margin: 0; }
+.tradeoff-row figcaption { text-align: left; margin-left: 0; }
+
+.tradeoff-chart { width: 100%; height: auto; font-family: var(--font); overflow: visible; }
+.tc-grid { stroke: #e8ebf0; stroke-width: 1; }
+.tc-mark10 { stroke: var(--accent-soft); stroke-width: 18; }
+.tc-tick { font-size: 12px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.tc-title { font-size: 13px; font-weight: 600; fill: var(--ink-2); }
+.tc-axis { font-size: 12.5px; fill: var(--muted); }
+.tc-note { font-size: 12px; font-weight: 600; fill: var(--accent); }
+.tc-regime { font-size: 12px; fill: var(--muted); font-style: italic; }
+.tc-line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.tc-line.stab { stroke: var(--accent); }
+.tc-line.pen { stroke: var(--brown); }
+.tc-err { stroke-width: 1.4; }
+.tc-pt.stab .tc-err { stroke: #8fa6cc; }
+.tc-pt.pen .tc-err { stroke: #c9b08c; }
+.tc-pt circle { stroke: #fff; stroke-width: 2; }
+.tc-pt.stab circle { fill: var(--accent); }
+.tc-pt.pen circle { fill: var(--brown); }
+.tc-pt circle.tc-hit { fill: transparent; stroke: none; cursor: default; }
+.tc-pt:hover circle:not(.tc-hit) { stroke: var(--ink); }
+.tc-val { font-size: 12px; fill: var(--ink-2); }
+.tc-val.strong { font-weight: 700; fill: var(--ink); }
+
+.regimes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.regime { background: var(--soft); border-radius: var(--radius); padding: 12px 12px 14px; border: 1px solid transparent; }
+.regime.is-best { border-color: var(--accent); background: #fff; }
+.regime svg { width: 100%; height: auto; margin-bottom: 6px; }
+.regime p { margin: 0; }
+.rg-k { font-size: 12.5px; color: var(--muted); }
+.regime.is-best .rg-k { color: var(--accent); font-weight: 600; }
+.rg-t { font-size: 15px; font-weight: 600; color: var(--ink); margin: 2px 0 4px !important; }
+.rg-d { font-size: 13.5px; line-height: 1.45; color: var(--ink-2); }
+
+.sc-ground { stroke: #627384; stroke-width: 2; stroke-linecap: round; }
+.sc-blk { stroke-width: 1.5; }
+.sc-blk.a { fill: #d6a056; stroke: #8a5a22; }
+.sc-blk.b { fill: #6592ca; stroke: #2b4f80; }
+.sc-ov { fill: #5b3a14; fill-opacity: 0.55; }
+.sc-contact { stroke: #197d73; stroke-width: 3; stroke-linecap: round; }
+.sc-lead { stroke: #223342; stroke-width: 1.2; }
+.sc-lbl { font: 600 12px var(--font); fill: #223342; }
+.sc-gap, .sc-fall { stroke: #223342; stroke-width: 1.6; fill: none; }
+.sc-gaphead, .sc-fallhead { stroke: #223342; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 900px) {
+  .tradeoff-row { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+}
+@media (max-width: 640px) {
+  .regimes { gap: 8px; }
+  .regime { padding: 8px 8px 10px; }
+  .rg-t { font-size: 13.5px; }
+  .rg-d { font-size: 12px; }
+  .rg-k { font-size: 11.5px; }
+  .tc-tick, .tc-val, .tc-note, .tc-regime { font-size: 13px; }
+  .tc-title, .tc-axis { font-size: 14px; }
+}
