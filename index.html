@@ -62,9 +62,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=3">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="assets/js/main.js"></script>
+  <script defer src="assets/js/main.js?v=3"></script>
 </head>
 <body id="top">
 
@@ -378,85 +378,75 @@
       <div class="tradeoff" id="why-n10">
         <h4 class="sub">Why does stability peak at <span class="m">N</span>&nbsp;=&nbsp;10?</h4>
         <p class="prose">The AABB score only penalizes overlap. A gap between blocks scores the same as a clean contact, <span class="m">S</span>&nbsp;=&nbsp;0. With few samples, the kept sample often still has interpenetrating blocks, which the simulator pushes apart. As <span class="m">N</span> grows, the lowest-score sample tends to have blocks spread apart, including floating blocks with no support from below, which drop when simulated. We attribute the slight decline beyond <span class="m">N</span>&nbsp;=&nbsp;10 to this trade-off: penetration keeps falling, but floating blocks offset the gain.</p>
-        <div class="tradeoff-row">
-          <figure class="figure tradeoff-fig">
+        <figure class="figure tradeoff-fig">
+          <div class="tradeoff-anim" data-x1="56.0" data-x10="247.0" data-x100="438.0">
             <svg class="tradeoff-chart" viewBox="0 0 460 336" role="img" aria-labelledby="tradeoff-chart-title tradeoff-chart-desc">
-<title id="tradeoff-chart-title">Stability and penetration versus N for Best-of-N selection</title>
-<desc id="tradeoff-chart-desc">Post-hoc stability rises from 45.30% at N = 1 to 72.40% at N = 10, then stays between 66.00% and 69.30% for N = 25 to 100, while penetration falls monotonically from .711 to .025. Values from Table I.</desc>
-<line class="tc-mark10" x1="247.0" y1="30" x2="247.0" y2="278"/>
-<line class="tc-grid" x1="56" y1="154.4" x2="438" y2="154.4"/>
-<text class="tc-tick" x="48" y="158.4" text-anchor="end">40</text>
-<line class="tc-grid" x1="56" y1="123.3" x2="438" y2="123.3"/>
-<text class="tc-tick" x="48" y="127.3" text-anchor="end">50</text>
-<line class="tc-grid" x1="56" y1="92.2" x2="438" y2="92.2"/>
-<text class="tc-tick" x="48" y="96.2" text-anchor="end">60</text>
-<line class="tc-grid" x1="56" y1="61.1" x2="438" y2="61.1"/>
-<text class="tc-tick" x="48" y="65.1" text-anchor="end">70</text>
-<line class="tc-grid" x1="56" y1="30.0" x2="438" y2="30.0"/>
-<text class="tc-tick" x="48" y="34.0" text-anchor="end">80</text>
-<text class="tc-title" x="56" y="18">Post-hoc stability (%)</text>
-<line class="tc-grid" x1="56" y1="278.0" x2="438" y2="278.0"/>
-<text class="tc-tick" x="48" y="282.0" text-anchor="end">0</text>
-<line class="tc-grid" x1="56" y1="245.0" x2="438" y2="245.0"/>
-<text class="tc-tick" x="48" y="249.0" text-anchor="end">.4</text>
-<line class="tc-grid" x1="56" y1="212.0" x2="438" y2="212.0"/>
-<text class="tc-tick" x="48" y="216.0" text-anchor="end">.8</text>
-<text class="tc-title" x="56" y="196">Penetration</text>
-<text class="tc-tick" x="56.0" y="296" text-anchor="middle">1</text>
-<text class="tc-tick" x="189.5" y="296" text-anchor="middle">5</text>
-<text class="tc-tick" x="247.0" y="296" text-anchor="middle">10</text>
-<text class="tc-tick" x="323.0" y="296" text-anchor="middle">25</text>
-<text class="tc-tick" x="380.5" y="296" text-anchor="middle">50</text>
-<text class="tc-tick" x="438.0" y="296" text-anchor="middle">100</text>
-<text class="tc-axis" x="247.0" y="316" text-anchor="middle">N (samples drawn; lowest AABB score kept)</text>
-<text class="tc-regime" x="237.0" y="166" text-anchor="end">← residual overlap</text>
-<text class="tc-regime" x="257.0" y="166">floating blocks →</text>
-<polyline class="tc-line stab" points="56.0,138.0 189.5,71.4 247.0,53.6 323.0,68.0 380.5,63.3 438.0,73.6"/>
-<g class="tc-pt stab"><title>Single sample (N = 1): stability 45.30 ± 4.10%</title><line class="tc-err" x1="56.0" y1="150.7" x2="56.0" y2="125.2"/><line class="tc-err" x1="52.0" y1="150.7" x2="60.0" y2="150.7"/><line class="tc-err" x1="52.0" y1="125.2" x2="60.0" y2="125.2"/><circle cx="56.0" cy="138.0" r="4.5"/><circle class="tc-hit" cx="56.0" cy="138.0" r="13"/></g>
-<g class="tc-pt stab"><title>Best-of-5: stability 66.70 ± 4.61%</title><line class="tc-err" x1="189.5" y1="85.7" x2="189.5" y2="57.0"/><line class="tc-err" x1="185.5" y1="85.7" x2="193.5" y2="85.7"/><line class="tc-err" x1="185.5" y1="57.0" x2="193.5" y2="57.0"/><circle cx="189.5" cy="71.4" r="4.5"/><circle class="tc-hit" cx="189.5" cy="71.4" r="13"/></g>
-<g class="tc-pt stab is-best"><title>Best-of-10: stability 72.40 ± 4.63%</title><line class="tc-err" x1="247.0" y1="68.0" x2="247.0" y2="39.2"/><line class="tc-err" x1="243.0" y1="68.0" x2="251.0" y2="68.0"/><line class="tc-err" x1="243.0" y1="39.2" x2="251.0" y2="39.2"/><circle cx="247.0" cy="53.6" r="5.5"/><circle class="tc-hit" cx="247.0" cy="53.6" r="13"/></g>
-<g class="tc-pt stab"><title>Best-of-25: stability 67.80 ± 5.15%</title><line class="tc-err" x1="323.0" y1="84.0" x2="323.0" y2="51.9"/><line class="tc-err" x1="319.0" y1="84.0" x2="327.0" y2="84.0"/><line class="tc-err" x1="319.0" y1="51.9" x2="327.0" y2="51.9"/><circle cx="323.0" cy="68.0" r="4.5"/><circle class="tc-hit" cx="323.0" cy="68.0" r="13"/></g>
-<g class="tc-pt stab"><title>Best-of-50: stability 69.30 ± 4.94%</title><line class="tc-err" x1="380.5" y1="78.7" x2="380.5" y2="47.9"/><line class="tc-err" x1="376.5" y1="78.7" x2="384.5" y2="78.7"/><line class="tc-err" x1="376.5" y1="47.9" x2="384.5" y2="47.9"/><circle cx="380.5" cy="63.3" r="4.5"/><circle class="tc-hit" cx="380.5" cy="63.3" r="13"/></g>
-<g class="tc-pt stab"><title>Best-of-100: stability 66.00 ± 4.05%</title><line class="tc-err" x1="438.0" y1="86.2" x2="438.0" y2="61.0"/><line class="tc-err" x1="434.0" y1="86.2" x2="442.0" y2="86.2"/><line class="tc-err" x1="434.0" y1="61.0" x2="442.0" y2="61.0"/><circle cx="438.0" cy="73.6" r="4.5"/><circle class="tc-hit" cx="438.0" cy="73.6" r="13"/></g>
-<text class="tc-val" x="65.0" y="142.0">45.30</text>
-<text class="tc-val strong" x="247.0" y="32.2" text-anchor="middle">72.40</text>
-<text class="tc-val" x="323.0" y="99.0" text-anchor="middle">67.80</text>
-<polyline class="tc-line pen" points="56.0,219.3 189.5,266.9 247.0,272.7 323.0,275.2 380.5,275.7 438.0,275.9"/>
-<g class="tc-pt pen"><title>Single sample (N = 1): penetration 0.711 ± 0.066</title><line class="tc-err" x1="56.0" y1="224.8" x2="56.0" y2="213.9"/><circle cx="56.0" cy="219.3" r="4"/><circle class="tc-hit" cx="56.0" cy="219.3" r="13"/></g>
-<g class="tc-pt pen"><title>Best-of-5: penetration 0.134 ± 0.026</title><line class="tc-err" x1="189.5" y1="269.1" x2="189.5" y2="264.8"/><circle cx="189.5" cy="266.9" r="4"/><circle class="tc-hit" cx="189.5" cy="266.9" r="13"/></g>
-<g class="tc-pt pen"><title>Best-of-10: penetration 0.064 ± 0.016</title><line class="tc-err" x1="247.0" y1="274.0" x2="247.0" y2="271.4"/><circle cx="247.0" cy="272.7" r="4"/><circle class="tc-hit" cx="247.0" cy="272.7" r="13"/></g>
-<g class="tc-pt pen"><title>Best-of-25: penetration 0.034 ± 0.005</title><line class="tc-err" x1="323.0" y1="275.6" x2="323.0" y2="274.8"/><circle cx="323.0" cy="275.2" r="4"/><circle class="tc-hit" cx="323.0" cy="275.2" r="13"/></g>
-<g class="tc-pt pen"><title>Best-of-50: penetration 0.028 ± 0.003</title><line class="tc-err" x1="380.5" y1="275.9" x2="380.5" y2="275.4"/><circle cx="380.5" cy="275.7" r="4"/><circle class="tc-hit" cx="380.5" cy="275.7" r="13"/></g>
-<g class="tc-pt pen"><title>Best-of-100: penetration 0.025 ± 0.002</title><line class="tc-err" x1="438.0" y1="276.1" x2="438.0" y2="275.8"/><circle cx="438.0" cy="275.9" r="4"/><circle class="tc-hit" cx="438.0" cy="275.9" r="13"/></g>
-<text class="tc-val" x="66.0" y="212.3">.711</text>
-<text class="tc-val" x="438.0" y="266.9" text-anchor="middle">.025</text>
-</svg>
-            <figcaption>Table I values (mean ± std over 10 folds) on a log scale of <span class="m">N</span>. Penetration falls monotonically, while stability peaks at <span class="m">N</span>&nbsp;=&nbsp;10; the two arrows mark our interpretation of the dominant failure mode.</figcaption>
-          </figure>
-          <figure class="figure tradeoff-schem">
-            <div class="regimes">
-              <div class="regime">
-                <svg viewBox="0 0 180 128" aria-hidden="true"><line class="sc-ground" x1="12" y1="112" x2="168" y2="112"/><rect class="sc-blk b" x="52" y="72" width="76" height="40"/><rect class="sc-blk a" x="34" y="46" width="98" height="38"/><rect class="sc-ov" x="52" y="72" width="76" height="12"/><line class="sc-lead" x1="129" y1="79" x2="146" y2="63"/><text class="sc-lbl" x="178" y="58" text-anchor="end">overlap</text></svg>
-                <p class="rg-k">Small <span class="m">N</span></p>
-                <p class="rg-t">Residual overlap</p>
-                <p class="rg-d"><span class="m">S</span>&nbsp;&gt;&nbsp;0. The simulator pushes the blocks apart, and the stack can topple.</p>
-              </div>
-              <div class="regime is-best">
-                <svg viewBox="0 0 180 128" aria-hidden="true"><line class="sc-ground" x1="12" y1="112" x2="168" y2="112"/><rect class="sc-blk b" x="52" y="72" width="76" height="40"/><rect class="sc-blk a" x="34" y="34" width="98" height="38"/><line class="sc-contact" x1="52" y1="72" x2="128" y2="72"/></svg>
-                <p class="rg-k"><span class="m">N</span>&nbsp;≈&nbsp;10</p>
-                <p class="rg-t">In contact</p>
-                <p class="rg-d"><span class="m">S</span>&nbsp;≈&nbsp;0. Blocks rest on their supports.</p>
-              </div>
-              <div class="regime">
-                <svg viewBox="0 0 180 128" aria-hidden="true"><line class="sc-ground" x1="12" y1="112" x2="168" y2="112"/><rect class="sc-blk b" x="52" y="72" width="76" height="40"/><rect class="sc-blk a" x="34" y="12" width="98" height="38"/><line class="sc-gap" x1="146" y1="52" x2="146" y2="70"/><path class="sc-gaphead" d="M142 55 L146 50 L150 55 M142 67 L146 72 L150 67"/><text class="sc-lbl" x="156" y="65">gap</text><path class="sc-fall" d="M22 22 V48"/><path class="sc-fallhead" d="M17 43 L22 50 L27 43"/></svg>
-                <p class="rg-k">Large <span class="m">N</span></p>
-                <p class="rg-t">Floating block</p>
-                <p class="rg-d"><span class="m">S</span>&nbsp;=&nbsp;0, since the score cannot see the gap. The block drops when simulated.</p>
-              </div>
-            </div>
-            <figcaption>Schematic (front view, not experimental data): small <span class="m">N</span> leaves penetration, large <span class="m">N</span> favors floating blocks.</figcaption>
-          </figure>
-        </div>
+            <title id="tradeoff-chart-title">Stability and penetration versus N for Best-of-N selection</title>
+            <desc id="tradeoff-chart-desc">Post-hoc stability rises from 45.30% at N = 1 to 72.40% at N = 10, then stays between 66.00% and 69.30% for N = 25 to 100, while penetration falls monotonically from .711 to .025. Values from Table I.</desc>
+            <defs><clipPath id="tc-sweep"><rect class="tc-sweep-rect" x="0" y="0" width="460" height="336"/></clipPath></defs>
+            <line class="tc-mark10" x1="247.0" y1="30" x2="247.0" y2="278"/>
+            <line class="tc-grid" x1="56" y1="154.4" x2="438" y2="154.4"/>
+            <text class="tc-tick" x="48" y="158.4" text-anchor="end">40</text>
+            <line class="tc-grid" x1="56" y1="123.3" x2="438" y2="123.3"/>
+            <text class="tc-tick" x="48" y="127.3" text-anchor="end">50</text>
+            <line class="tc-grid" x1="56" y1="92.2" x2="438" y2="92.2"/>
+            <text class="tc-tick" x="48" y="96.2" text-anchor="end">60</text>
+            <line class="tc-grid" x1="56" y1="61.1" x2="438" y2="61.1"/>
+            <text class="tc-tick" x="48" y="65.1" text-anchor="end">70</text>
+            <line class="tc-grid" x1="56" y1="30.0" x2="438" y2="30.0"/>
+            <text class="tc-tick" x="48" y="34.0" text-anchor="end">80</text>
+            <text class="tc-title" x="56" y="18">Post-hoc stability (%)</text>
+            <line class="tc-grid" x1="56" y1="278.0" x2="438" y2="278.0"/>
+            <text class="tc-tick" x="48" y="282.0" text-anchor="end">0</text>
+            <line class="tc-grid" x1="56" y1="245.0" x2="438" y2="245.0"/>
+            <text class="tc-tick" x="48" y="249.0" text-anchor="end">.4</text>
+            <line class="tc-grid" x1="56" y1="212.0" x2="438" y2="212.0"/>
+            <text class="tc-tick" x="48" y="216.0" text-anchor="end">.8</text>
+            <text class="tc-title" x="56" y="196">Penetration</text>
+            <text class="tc-tick" x="56.0" y="296" text-anchor="middle">1</text>
+            <text class="tc-tick" x="189.5" y="296" text-anchor="middle">5</text>
+            <text class="tc-tick" x="247.0" y="296" text-anchor="middle">10</text>
+            <text class="tc-tick" x="323.0" y="296" text-anchor="middle">25</text>
+            <text class="tc-tick" x="380.5" y="296" text-anchor="middle">50</text>
+            <text class="tc-tick" x="438.0" y="296" text-anchor="middle">100</text>
+            <text class="tc-axis" x="247.0" y="316" text-anchor="middle">N (samples drawn; lowest AABB score kept)</text>
+            <text class="tc-phase p1" x="233.0" y="40" text-anchor="end">penetration → none</text>
+            <text class="tc-phase p2" x="269.0" y="40">floating blocks appear</text>
+            <g clip-path="url(#tc-sweep)">
+            <polyline class="tc-line stab" points="56.0,138.0 189.5,71.4 247.0,53.6 323.0,68.0 380.5,63.3 438.0,73.6"/>
+            <polyline class="tc-line pen" points="56.0,219.3 189.5,266.9 247.0,272.7 323.0,275.2 380.5,275.7 438.0,275.9"/>
+            </g>
+            <g class="tc-pt stab" data-x="56.0"><title>Single sample (N = 1): stability 45.30 ± 4.10%</title><line class="tc-err" x1="56.0" y1="150.7" x2="56.0" y2="125.2"/><line class="tc-err" x1="52.0" y1="150.7" x2="60.0" y2="150.7"/><line class="tc-err" x1="52.0" y1="125.2" x2="60.0" y2="125.2"/><circle cx="56.0" cy="138.0" r="4.5"/><circle class="tc-hit" cx="56.0" cy="138.0" r="13"/></g>
+            <g class="tc-pt pen" data-x="56.0"><title>Single sample (N = 1): penetration 0.711 ± 0.066</title><line class="tc-err" x1="56.0" y1="224.8" x2="56.0" y2="213.9"/><circle cx="56.0" cy="219.3" r="4"/><circle class="tc-hit" cx="56.0" cy="219.3" r="13"/></g>
+            <g class="tc-pt stab" data-x="189.5"><title>Best-of-5: stability 66.70 ± 4.61%</title><line class="tc-err" x1="189.5" y1="85.7" x2="189.5" y2="57.0"/><line class="tc-err" x1="185.5" y1="85.7" x2="193.5" y2="85.7"/><line class="tc-err" x1="185.5" y1="57.0" x2="193.5" y2="57.0"/><circle cx="189.5" cy="71.4" r="4.5"/><circle class="tc-hit" cx="189.5" cy="71.4" r="13"/></g>
+            <g class="tc-pt pen" data-x="189.5"><title>Best-of-5: penetration 0.134 ± 0.026</title><line class="tc-err" x1="189.5" y1="269.1" x2="189.5" y2="264.8"/><circle cx="189.5" cy="266.9" r="4"/><circle class="tc-hit" cx="189.5" cy="266.9" r="13"/></g>
+            <g class="tc-pt stab is-best" data-x="247.0"><title>Best-of-10: stability 72.40 ± 4.63%</title><line class="tc-err" x1="247.0" y1="68.0" x2="247.0" y2="39.2"/><line class="tc-err" x1="243.0" y1="68.0" x2="251.0" y2="68.0"/><line class="tc-err" x1="243.0" y1="39.2" x2="251.0" y2="39.2"/><circle cx="247.0" cy="53.6" r="5.5"/><circle class="tc-hit" cx="247.0" cy="53.6" r="13"/></g>
+            <g class="tc-pt pen" data-x="247.0"><title>Best-of-10: penetration 0.064 ± 0.016</title><line class="tc-err" x1="247.0" y1="274.0" x2="247.0" y2="271.4"/><circle cx="247.0" cy="272.7" r="4"/><circle class="tc-hit" cx="247.0" cy="272.7" r="13"/></g>
+            <g class="tc-pt stab" data-x="323.0"><title>Best-of-25: stability 67.80 ± 5.15%</title><line class="tc-err" x1="323.0" y1="84.0" x2="323.0" y2="51.9"/><line class="tc-err" x1="319.0" y1="84.0" x2="327.0" y2="84.0"/><line class="tc-err" x1="319.0" y1="51.9" x2="327.0" y2="51.9"/><circle cx="323.0" cy="68.0" r="4.5"/><circle class="tc-hit" cx="323.0" cy="68.0" r="13"/></g>
+            <g class="tc-pt pen" data-x="323.0"><title>Best-of-25: penetration 0.034 ± 0.005</title><line class="tc-err" x1="323.0" y1="275.6" x2="323.0" y2="274.8"/><circle cx="323.0" cy="275.2" r="4"/><circle class="tc-hit" cx="323.0" cy="275.2" r="13"/></g>
+            <g class="tc-pt stab" data-x="380.5"><title>Best-of-50: stability 69.30 ± 4.94%</title><line class="tc-err" x1="380.5" y1="78.7" x2="380.5" y2="47.9"/><line class="tc-err" x1="376.5" y1="78.7" x2="384.5" y2="78.7"/><line class="tc-err" x1="376.5" y1="47.9" x2="384.5" y2="47.9"/><circle cx="380.5" cy="63.3" r="4.5"/><circle class="tc-hit" cx="380.5" cy="63.3" r="13"/></g>
+            <g class="tc-pt pen" data-x="380.5"><title>Best-of-50: penetration 0.028 ± 0.003</title><line class="tc-err" x1="380.5" y1="275.9" x2="380.5" y2="275.4"/><circle cx="380.5" cy="275.7" r="4"/><circle class="tc-hit" cx="380.5" cy="275.7" r="13"/></g>
+            <g class="tc-pt stab" data-x="438.0"><title>Best-of-100: stability 66.00 ± 4.05%</title><line class="tc-err" x1="438.0" y1="86.2" x2="438.0" y2="61.0"/><line class="tc-err" x1="434.0" y1="86.2" x2="442.0" y2="86.2"/><line class="tc-err" x1="434.0" y1="61.0" x2="442.0" y2="61.0"/><circle cx="438.0" cy="73.6" r="4.5"/><circle class="tc-hit" cx="438.0" cy="73.6" r="13"/></g>
+            <g class="tc-pt pen" data-x="438.0"><title>Best-of-100: penetration 0.025 ± 0.002</title><line class="tc-err" x1="438.0" y1="276.1" x2="438.0" y2="275.8"/><circle cx="438.0" cy="275.9" r="4"/><circle class="tc-hit" cx="438.0" cy="275.9" r="13"/></g>
+            <text class="tc-val" data-x="56.0" x="65.0" y="142.0">45.30</text>
+            <text class="tc-val strong" data-x="247.0" x="247.0" y="32.2" text-anchor="middle">72.40</text>
+            <text class="tc-val" data-x="323.0" x="323.0" y="99.0" text-anchor="middle">67.80</text>
+            <text class="tc-val" data-x="56.0" x="66.0" y="208.3">.711</text>
+            <text class="tc-val" data-x="438.0" x="438.0" y="266.9" text-anchor="middle">.025</text>
+            <line class="tc-cursor" x1="56" y1="48" x2="56" y2="278"/>
+            <circle class="tc-head stab" cx="56" cy="138.0" r="5"/>
+            <circle class="tc-head pen" cx="56" cy="219.3" r="4.5"/>
+            </svg>
+            <svg class="tradeoff-blocks" viewBox="0 0 180 150" role="img" aria-label="Schematic of two blocks: as N grows, the top block goes from overlapping the lower block, to resting on it, to floating above it.">
+              <line class="sc-ground" x1="16" y1="128" x2="164" y2="128"/>
+              <rect class="sc-blk b" x="52" y="88" width="76" height="40"/>
+              <rect class="sc-blk a" x="34" y="50" width="98" height="38"/>
+              <rect class="sc-ov" x="52" y="88" width="76" height="0"/>
+              <line class="sc-contact" x1="52" y1="88" x2="128" y2="88"/>
+            </svg>
+          </div>
+          <figcaption>As <span class="m">N</span> grows (log scale), the kept sample moves from interpenetrating blocks, to contact, to a floating block. Curves are Table I (mean ± std over 10 folds); the block drawing is a schematic.</figcaption>
+        </figure>
       </div>
 
       <figure class="figure">
@@ -464,7 +454,7 @@
         <figcaption>Two generated examples (17 and 24 blocks): target silhouettes, reference structure, generated structure before simulation, and its configuration after post-hoc physics simulation.</figcaption>
       </figure>
 
-      <div class="split pair">
+      <div class="pair">
         <figure class="media">
           <div class="labeled" style="--rows:3">
             <div class="lab-cols" aria-hidden="true"><span>Front</span><span>Left</span><span>Top</span></div>
@@ -474,16 +464,6 @@
             </div>
           </div>
           <figcaption>Generation in action for another target, from noise (<i>t</i>&nbsp;=&nbsp;0) to structure (<i>t</i>&nbsp;=&nbsp;1).</figcaption>
-        </figure>
-        <figure class="media">
-          <div class="labeled" style="--rows:4">
-            <div class="lab-cols" aria-hidden="true"><span>Front</span><span>Left</span><span>Top</span></div>
-            <div class="lab-rows" aria-hidden="true"><span>Target<span class="lg"> silhouettes</span></span><span>Reference</span><span class="is-gen">Generated</span><span><span class="lg">After simulation</span><span class="sm">After sim.</span></span></div>
-            <div class="lab-media">
-              <img src="assets/img/generation_example3.webp" width="1604" height="2140" loading="lazy" alt="A third generated example. Rows: target silhouettes, reference, generated, and after simulation; columns: front, left, and top views.">
-            </div>
-          </div>
-          <figcaption>One more generated example, in the same row layout as the figure above.</figcaption>
         </figure>
       </div>
     </div>

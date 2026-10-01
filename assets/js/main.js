@@ -76,6 +76,122 @@
     return r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight);
   }
 
+  // ---- Best-of-N trade-off: sweep N along the curves; the block gap follows ----
+  var tradeoff = document.querySelector(".tradeoff-anim");
+  if (tradeoff) initTradeoff(tradeoff);
+
+  function initTradeoff(root) {
+    var svg = root.querySelector(".tradeoff-chart");
+    var x1 = +root.dataset.x1, x10 = +root.dataset.x10, x100 = +root.dataset.x100;
+    var sweep = svg.querySelector(".tc-sweep-rect");
+    var cursor = svg.querySelector(".tc-cursor");
+    var heads = [
+      { el: svg.querySelector(".tc-head.stab"), pts: pointsOf(svg.querySelector(".tc-line.stab")) },
+      { el: svg.querySelector(".tc-head.pen"), pts: pointsOf(svg.querySelector(".tc-line.pen")) }
+    ];
+    var reveal = Array.prototype.slice.call(svg.querySelectorAll(".tc-pt, .tc-val"));
+    var p1 = svg.querySelector(".tc-phase.p1"), p2 = svg.querySelector(".tc-phase.p2");
+    var blk = root.querySelector(".sc-blk.a"), ov = root.querySelector(".sc-ov"), contact = root.querySelector(".sc-contact");
+    var TOP = 50, DMAX = 18;               // the upper block rests on the lower one at y = 50
+    var RISE = 3600, HOLD = 1200, FALL = 3200, CYCLE = RISE + HOLD + FALL + HOLD;
+    var elapsed = 0, last = null, raf = null, visible = false, userPaused = reduceMotion;
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "vid-toggle";
+    root.appendChild(btn);
+    btn.addEventListener("click", function () {
+      userPaused = !userPaused;
+      if (!userPaused) root.classList.add("is-anim");
+      update();
+    });
+
+    function ease(u) { return u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2; }
+
+    function frameAt(t) {
+      if (t < RISE) { var u = ease(t / RISE); return { x: x1 + (x10 - x1) * u, d: -DMAX * (1 - u), phase: 1 }; }
+      t -= RISE;
+      if (t < HOLD) return { x: x10, d: 0, phase: 1 };
+      t -= HOLD;
+      if (t < FALL) { var v = ease(t / FALL); return { x: x10 + (x100 - x10) * v, d: DMAX * v, phase: 2 }; }
+      return { x: x100, d: DMAX, phase: 2 };
+    }
+
+    function render(f) {
+      sweep.setAttribute("width", f.x.toFixed(1));
+      cursor.setAttribute("x1", f.x.toFixed(1));
+      cursor.setAttribute("x2", f.x.toFixed(1));
+      heads.forEach(function (h) {
+        h.el.setAttribute("cx", f.x.toFixed(1));
+        h.el.setAttribute("cy", yAt(h.pts, f.x).toFixed(1));
+      });
+      reveal.forEach(function (el) { el.classList.toggle("is-hidden", +el.getAttribute("data-x") > f.x + 0.5); });
+      p1.classList.toggle("is-on", f.phase === 1);
+      p2.classList.toggle("is-on", f.phase === 2);
+      // d < 0: blocks interpenetrate; d = 0: contact; d > 0: the upper block floats
+      blk.setAttribute("y", (TOP - f.d).toFixed(1));
+      ov.setAttribute("height", Math.max(0, -f.d).toFixed(1));
+      contact.style.opacity = Math.max(0, 1 - Math.abs(f.d) / 3).toFixed(2);
+    }
+
+    function tick(now) {
+      raf = null;
+      if (last !== null) elapsed = (elapsed + Math.min(now - last, 100)) % CYCLE;
+      last = now;
+      render(frameAt(elapsed));
+      if (visible && !userPaused) raf = requestAnimationFrame(tick);
+    }
+
+    function update() {
+      var run = visible && !userPaused;
+      if (run && raf === null) { last = null; raf = requestAnimationFrame(tick); }
+      if (!run && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+      root.classList.toggle("is-paused", userPaused);
+      btn.innerHTML = userPaused ? PLAY : PAUSE;
+      btn.setAttribute("aria-label", userPaused ? "Play animation" : "Pause animation");
+    }
+
+    if (userPaused) {
+      // reduced motion: full static chart, blocks in contact
+      render({ x: x100, d: 0, phase: 0 });
+    } else {
+      root.classList.add("is-anim");
+      render(frameAt(0));
+    }
+
+    if ("IntersectionObserver" in window) {
+      var observed = false;
+      new IntersectionObserver(function (entries) {
+        observed = true;
+        visible = entries[0].isIntersecting;
+        update();
+      }, { threshold: 0.2 }).observe(root);
+      // some embedded/background views never deliver observer callbacks; fall back to running
+      setTimeout(function () { if (!observed) { visible = true; update(); } }, 1000);
+    } else {
+      visible = true;
+      update();
+    }
+  }
+
+  function pointsOf(polyline) {
+    return polyline.getAttribute("points").trim().split(/\s+/).map(function (p) {
+      var xy = p.split(",");
+      return [+xy[0], +xy[1]];
+    });
+  }
+
+  function yAt(pts, x) {
+    if (x <= pts[0][0]) return pts[0][1];
+    for (var i = 1; i < pts.length; i++) {
+      if (x <= pts[i][0]) {
+        var a = pts[i - 1], b = pts[i];
+        return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]);
+      }
+    }
+    return pts[pts.length - 1][1];
+  }
+
   // ---- Copy BibTeX ----
   document.querySelectorAll(".copy-btn").forEach(function (btn) {
     var label = btn.querySelector("span");
