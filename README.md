@@ -3,7 +3,7 @@
 Project page for **StackGen3D: Stable 3D Block Stack Generation from Multiview Silhouettes**
 (Creativity in Assembly Workshop @ IROS 2026).
 
-Live at <https://ripl.github.io/StackGen3D-web/>.
+Live at <https://ripl.github.io/StackGen3D-web/>. Paper: <https://arxiv.org/abs/2610.31803>.
 
 Plain HTML/CSS/JS, no build step:
 
